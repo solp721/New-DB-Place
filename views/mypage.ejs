@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/mypage.css" />
+    <title>사용자 마이페이지</title>
+  </head>
+  <body>
+    <a href="/" style="text-decoration: none"><h1>A DB PLACE</h1></a>
+    <h2><%= user_info[0].user_id %>님의 마이페이지 입니다.</h2>
+
+    <h3><%= user_info[0].user_id %>님의 회원정보 입니다.</h3>
+    <table border="1">
+      <thead>
+        <tr>
+          <th scope="col">회원 아이디</th>
+          <th scope="col">회원 이름</th>
+          <th scope="col">회원 주소</th>
+          <th scope="col">회원 휴대폰번호</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for(var i = 0; i< user_info.length; i++) { %>
+        <tr>
+          <td><%= user_info[i].user_id %></td>
+          <td><%= user_info[i].user_name %></td>
+          <td><%= user_info[i].user_address %></td>
+          <td><%= user_info[i].user_phone %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <% if(menu_info[0].length != 0 ) {%>
+    <h3><%= user_info[0].user_id %>님의 주문내역 입니다.</h3>
+
+    <% var currentOrderNum = null; %>
+    <table border="1">
+      <thead>
+        <tr>
+          <th scope="col">주문번호</th>
+          <th scope="col">주문날짜</th>
+          <th scope="col">주문메뉴번호</th>
+          <th scope="col">주문메뉴이름</th>
+          <th scope="col">주문수량</th>
+          <th scope="col">주문가격</th>
+          <th scope="col">주문방식</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for(var i = 0; i < menu_info.length; i++) { %> <% if (currentOrderNum
+        !== menu_info[i].order_order_num) { %> <% if (currentOrderNum !== null)
+        { %>
+        <tr>
+          <td colspan="7">
+            <%= menu_info[i-1].order_order_num %>번 주문 총 가격: <%=
+            menu_info[i-1].order_totalprice %> 원
+          </td>
+        </tr>
+        <% } %>
+        <tr>
+          <td><%= menu_info[i].order_order_num %></td>
+          <td><%= menu_info[i].order_date %></td>
+          <td><%= menu_info[i].menu_menu_num %></td>
+          <td><%= menu_info[i].menu_name %></td>
+          <td><%= menu_info[i].ordermenu_count %></td>
+          <td>
+            <%= menu_info[i].ordermenu_price * menu_info[i].ordermenu_count %>
+          </td>
+          <td><%= menu_info[i].order_pay %></td>
+        </tr>
+        <% currentOrderNum = menu_info[i].order_order_num; %> <% } else { %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td><%= menu_info[i].menu_menu_num %></td>
+          <td><%= menu_info[i].menu_name %></td>
+          <td><%= menu_info[i].ordermenu_count %></td>
+          <td>
+            <%= menu_info[i].ordermenu_price * menu_info[i].ordermenu_count %>
+          </td>
+          <td><%= menu_info[i].order_pay %></td>
+        </tr>
+        <% } %> <% if (i === menu_info.length - 1) { %>
+        <tr>
+          <td colspan="7">
+            <%= menu_info[i].order_order_num %>번 주문 총 가격: <%=
+            menu_info[i].order_totalprice %> 원
+          </td>
+        </tr>
+        <% } %> <% } %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <h3>주문내역이 없습니다.</h3>
+    <% } %>
+  </body>
+</html>

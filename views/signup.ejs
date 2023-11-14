@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원 가입</title>
+    <link rel="stylesheet" href="/stylesheets/signup.css" />
+  </head>
+  <body>
+    <form action="signup" method="post">
+      <h1>회원 가입</h1>
+      <a href="/user/signin"><small>로그인</small></a>
+
+      <label for="uid">아이디:</label>
+      <input type="text" id="uid" name="uid" required /><br />
+
+      <label for="uname">이름:</label>
+      <input type="text" id="uname" name="uname" required /><br />
+
+      <label for="uaddress">주소:</label>
+      <select id="uaddress" name="uaddress">
+        <option value="부산광역시">서울</option>
+        <option value="서울특별시">부산</option></select
+      ><br />
+
+      <label for="uphone">전화번호:</label>
+      <input
+        type="tel"
+        id="uphone"
+        name="uphone"
+        pattern="010-[0-9]{4}-[0-9]{4}"
+        required
+      /><br />
+      <small>올바른 양식: 010-xxxx-xxxx</small><br />
+      <div class="button-container">
+        <button type="submit">회원가입</button>
+      </div>
+    </form>
+  </body>
+</html>

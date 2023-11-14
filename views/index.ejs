@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>커피</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <a href="/"><h1>A DB PLACE</h1></a>
+    <nav>
+     <% if(signinStatus) { %> 
+      <h2>환영합니다! <%= userName %>님</h2>
+      <a href="/user/signin" type="button"> 로그아웃 </a>
+      <a href="/basket" type="button">장바구니</a>
+      <a href="/mypage" type="button">마이페이지</a>
+      <form action="/search" method="POST">
+        <input
+          type="text"
+          name="query"
+          id="query"
+          placeholder="검색어를 입력하세요"
+        />
+        <button type="submit">검색</button>
+      </form>
+      <div>
+        <table border="1">
+          <thead>
+            <tr>
+              <th scope="col">메뉴 번호</th>
+              <th scope="col">메뉴 이름</th>
+              <th scope="col">메뉴 가격</th>
+              <th scope="col">메뉴 타입</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(var i = 0; i< menu_info.length; i++){%>
+            <tr>
+              <th scope="row">
+                <button onclick="showDetails(<%= i %>)">
+                  <%= menu_info[i].menu_num %>
+                </button>
+              </th>
+              <td><%= menu_info[i].menu_name %></td>
+              <td><%= menu_info[i].menu_price %></td>
+              <td><%= menu_info[i].menu_type %></td>
+            </tr>
+            <tr class="hidden">
+              <td colspan="4">
+                <p>재료: 메뉴번호 <%= menu_info[i].menu_num %>번 제품</p>
+                <li><%= ingre_info[i].menu_best%></li>
+                <form
+                  action="../../basket/update/<%=menu_info[i].menu_num%>
+                  method="post"
+                >
+                  <input type="hidden" name="update" />
+                  <select name="update" id="update">
+                    <option value="best">대표메뉴</option>
+                    <option value="best">추천메뉴</option>
+                  </select>
+                  <button type="submit">버튼</button>
+                </form>
+                <ul>
+                  <% let minIngreTotalCount = 50; %> <% for (let j = 0; j <
+                  ingre_info.length; j++) { %> <% if (ingre_info[j].menu_num ===
+                  menu_info[i].menu_num) { %> <% minIngreTotalCount =
+                  Math.min(minIngreTotalCount, ingre_info[j].ingre_totalcount);
+                  %> <% } %> <% } %> <% for (let j = 0; j < ingre_info.length;
+                  j++) { %> <% if (ingre_info[j].menu_num ===
+                  menu_info[i].menu_num) { %>
+                  <li>
+                    <p>
+                      <%= ingre_info[j].ingre_name %> (원산지: <%=
+                      ingre_info[j].ingre_from %>) 남은개수: <% if
+                      (ingre_info[j].ingre_totalcount > 0) { %> <%=
+                      ingre_info[j].ingre_totalcount %> <% } else { %>
+                      <span style="color: red">재고 소진</span>
+                      <% } %>
+                    </p>
+                  </li>
+                  <% } %> <% } %>
+                  <li>
+                    <form
+                      id="addMenuForm<%= i %>"
+                      action="../../basket/addMenu/<%=menu_info[i].menu_num%>"
+                      method="post"
+                    >
+                      <input
+                        type="hidden"
+                        name="menu_num"
+                        value="<%= menu_info[i].menu_num %>"
+                      />
+                      <input
+                        type="hidden"
+                        name="menu_type"
+                        value="<%= menu_info[i].menu_type %>"
+                      />
+                      <input
+                        type="hidden"
+                        name="menu_name"
+                        value="<%= menu_info[i].menu_name %>"
+                      />
+                      <input
+                        type="hidden"
+                        name="menu_price"
+                        value="<%= menu_info[i].menu_price %>"
+                      />
+                      <label for="menu_count">수량:</label>
+                      <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                          const form = document.querySelector("#addMenuForm<%= i %>");
+                          const submitButton = form.querySelector('input[type="submit"]');
+                          const menuCountInput = form.querySelector('input[name="menu_count"]');
+                          if (<%= minIngreTotalCount %> <= 0) {
+                            submitButton.disabled = true;
+                            menuCountInput.disabled = true;
+                          }
+                        });
+                      </script>
+                      <input
+                        type="number"
+                        name="menu_count"
+                        value="1"
+                        min="1"
+                        max="<%= minIngreTotalCount %>"
+                      />
+                      <input type="submit" value="장바구니에 추가" />
+                    </form>
+                  </li>
+                  <li>
+                    <form
+                      id="buyNowForm<%= i %>"
+                      action="/basket/buyNow/<%=menu_info[i].menu_num%>"
+                      method="post"
+                    >
+                      <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                          const form = document.querySelector("#buyNowForm<%= i %>");
+                          const submitButton = form.querySelector('input[type="submit"]');
+                          const menuCountInput = form.querySelector('input[name="menu_count"]');
+                          const minIngreTotalCount = <%= minIngreTotalCount %>;
+
+                          // 수량이 0 이하 또는 재료가 없을 경우 버튼을 비활성화
+                          if (minIngreTotalCount <= 0) {
+                            submitButton.disabled = true;
+                            menuCountInput.disabled = true;
+                          }
+                        });
+                      </script>
+                      <input
+                        type="hidden"
+                        name="menu_num"
+                        value="<%= menu_info[i].menu_num %>"
+                      />
+                      <input
+                        type="hidden"
+                        name="menu_type"
+                        value="<%= menu_info[i].menu_type %>"
+                      />
+                      <input
+                        type="hidden"
+                        name="menu_name"
+                        value="<%= menu_info[i].menu_name %>"
+                      />
+                      <input
+                        type="hidden"
+                        name="menu_price"
+                        value="<%= menu_info[i].menu_price %>"
+                      />
+                      <label for="buyNowCount">수량:</label>
+                      <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                          const form = document.querySelector("#buyNowForm<%= i %>");
+                          const menuCountInput = form.querySelector('input[name="menu_count"]');
+                          menuCountInput.max = <%= minIngreTotalCount %>;
+                        });
+                      </script>
+                      <input
+                        type="number"
+                        name="menu_count"
+                        value="1"
+                        min="1"
+                        max="<%= minIngreTotalCount %>"
+                      />
+                      <select name="pay" id="pay">
+                        <option value="card">신용카드</option>
+                        <option value="cash">현금</option>
+                        <option value="check">수표</option>
+                      </select>
+                      <input type="submit" value="즉시구매" />
+                    </form>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <% } else { %>
+      <a href="/user/signin" type="button">로그인</a>
+      <a href="/user/signup" type="button">회원가입</a>
+      <div>
+        <table border="1">
+          <thead>
+            <tr>
+              <th scope="col">메뉴 번호</th>
+              <th scope="col">메뉴 이름</th>
+              <th scope="col">메뉴 가격</th>
+              <th scope="col">메뉴 타입</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(var i = 0; i< menu_info.length; i++){%>
+            <tr>
+              <th scope="row">
+                <button><%= menu_info[i].menu_num %></button>
+              </th>
+              <td><%= menu_info[i].menu_name %></td>
+              <td><%= menu_info[i].menu_price %></td>
+              <td><%= menu_info[i].menu_type %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <a href="#" onclick="showAdminPanel()">관리자</a>
+      </div>
+    </nav>
+  <% } %>
+  </body>
+  <script>
+    function showDetails(index) {
+      const detailsRow = document.querySelectorAll(".hidden")[index];
+      if (detailsRow) {
+        if (
+          detailsRow.style.display === "none" ||
+          detailsRow.style.display === ""
+        ) {
+          detailsRow.style.display = "table-row";
+        } else {
+          detailsRow.style.display = "none";
+        }
+      }
+    }
+    function showAdminPanel() {
+      // Prompt for the password
+      const enteredPassword = prompt("비밀번호를 입력하세요:");
+
+      // Check if the entered password is correct
+      if (enteredPassword === "0721") {
+        // Password is correct, redirect to the administrator page
+        window.location.href = "/manager";
+      } else {
+        // Password is incorrect, show an alert
+        alert("비밀번호가 올바르지 않습니다.");
+      }
+    }
+  </script>
+</html>

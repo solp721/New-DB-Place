@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/signin.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <form method="post" action="signin">
+        <h1>로그인</h1>
+        <a href="/user/signup"
+          ><small style="margin-left: auto">회원가입</small></a
+        >
+
+        <label for="uid">아이디:</label>
+        <input type="text" id="uid" name="uid" required /><br />
+
+        <label for="uphone">휴대폰번호:</label>
+
+        <input
+          type="tel"
+          id="uphone"
+          name="uphone"
+          pattern="010-[0-9]{4}-[0-9]{4}"
+          required
+        />
+        <div><small>올바른 양식: 010-xxxx-xxxx</small><br /><br /></div>
+        <div class="button-container">
+          <button type="submit">로그인</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
