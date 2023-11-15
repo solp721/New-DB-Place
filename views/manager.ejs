@@ -7,6 +7,101 @@
   </head>
   <body>
     <a href="/"><h1>A DB PLACE</h1></a>
-    <h1>관리자</h1>
+    <h1>관리자 페이지</h1>
+
+    <div>
+      <h2>공급업체 현황</h2>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>업체 번호</th>
+            <th>업체 이름</th>
+            <th>업체 주소</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (let i = 0; i < sup_info.length; i++) { %>
+          <tr>
+            <td><%= sup_info[i].sup_num %></td>
+            <td><%= sup_info[i].sup_name %></td>
+            <td><%= sup_info[i].sup_address %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <form action="/manager/addSupply" method="post" id="supplyForm">
+        <label for="name">업체 이름:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="name">업체 번호:</label>
+        <input type="number" id="number" name="number" required />
+
+        <label for="city">업체 위치:</label>
+        <select id="city" name="city" required>
+          <option value="부산">부산</option>
+          <option value="서울">서울</option>
+        </select>
+
+        <button type="submit">추가</button>
+      </form>
+    </div>
+    <div>
+      <h2>공급업체별 주문현황</h2>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>업체 번호</th>
+            <th>업체 이름</th>
+            <th>업체 주소</th>
+            <th>주문 번호</th>
+            <th>주문 목록</th>
+            <th>주문 수량</th>
+            <th>주문 목록 단위</th>
+            <th>주문 날짜</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (let i = 0; i < sup.length; i++) { %>
+          <tr>
+            <td><%= sup[i].sup_num %></td>
+            <td><%= sup[i].sup_name %></td>
+            <td><%= sup[i].sup_address %></td>
+            <td><%= sup[i].delivery_num %></td>
+            <td><%= sup[i].ingredient_ingre_name %></td>
+            <td><%= sup[i].delivery_totalcount %></td>
+            <td><%= sup[i].delivery_ordertype %></td>
+            <td><%= sup[i].delivery_date %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2>메뉴별 레시피 현황</h2>
+      <table border="1">
+        <thead>
+          <th>메뉴번호</th>
+          <th>메뉴이름</th>
+          <th>메뉴가격</th>
+          <th>메뉴타입</th>
+          <th>이달의메뉴</th>
+          <th>레시피</th>
+          <th>필요한재료량</th>
+        </thead>
+        <% for (let i = 0; i < menu_recipe_info.length; i++) { %>
+        <tbody>
+          <tr>
+            <td><%= menu_recipe_info[i].menu_num %></td>
+            <td><%= menu_recipe_info[i].menu_name %></td>
+            <td><%= menu_recipe_info[i].menu_price %></td>
+            <td><%= menu_recipe_info[i].menu_type %></td>
+            <td><%= menu_recipe_info[i].menu_best %></td>
+            <td><%= menu_recipe_info[i].ingredient_ingre_name %></td>
+            <td><%= menu_recipe_info[i].recipe_req %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
