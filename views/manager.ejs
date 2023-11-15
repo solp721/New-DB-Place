@@ -95,7 +95,22 @@
             <td><%= menu_recipe_info[i].menu_name %></td>
             <td><%= menu_recipe_info[i].menu_price %></td>
             <td><%= menu_recipe_info[i].menu_type %></td>
-            <td><%= menu_recipe_info[i].menu_best %></td>
+            <td>
+              <form action="manager/uptype" method="post">
+                <input
+                  type="hidden"
+                  name="menu_num"
+                  value="<%= menu_recipe_info[i].menu_num %>"
+                />
+                <select name="type" id="type">
+                  <option value="대표메뉴">대표메뉴</option>
+                  <option value="추천메뉴">추천메뉴</option>
+                  <option value="기본메뉴">기본메뉴</option>
+                </select>
+                <button type="submit">수정</button>
+              </form>
+              <%= menu_recipe_info[i].menu_best %>
+            </td>
             <td><%= menu_recipe_info[i].ingredient_ingre_name %></td>
             <td><%= menu_recipe_info[i].recipe_req %></td>
           </tr>

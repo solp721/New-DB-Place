@@ -21,6 +21,4 @@ router.post("/orderBasket", basketController.orderBasket);
 //바로구매
 router.post("/buynow/:menu_num", basketController.buynow);
 
-router.post("/update/:menu_num", basketController.update);
-
 module.exports = router;

@@ -7,7 +7,7 @@
   <body>
     <a href="/"><h1>A DB PLACE</h1></a>
     <nav>
-     <% if(signinStatus) { %> 
+      <% if(signinStatus) { %>
       <h2>환영합니다! <%= userName %>님</h2>
       <a href="/user/signin" type="button"> 로그아웃 </a>
       <a href="/basket" type="button">장바구니</a>
@@ -47,17 +47,6 @@
               <td colspan="4">
                 <p>재료: 메뉴번호 <%= menu_info[i].menu_num %>번 제품</p>
                 <li><%= ingre_info[i].menu_best%></li>
-                <form
-                  action="../../basket/update/<%=menu_info[i].menu_num%>
-                  method="post"
-                >
-                  <input type="hidden" name="update" />
-                  <!-- <select name="update" id="update">
-                    <option value="best">대표메뉴</option>
-                    <option value="best">추천메뉴</option>
-                  </select>
-                  <button type="submit">버튼</button> -->
-                </form>
                 <ul>
                   <% let minIngreTotalCount = 50; %> <% for (let j = 0; j <
                   ingre_info.length; j++) { %> <% if (ingre_info[j].menu_num ===
@@ -224,7 +213,7 @@
         <a href="#" onclick="showAdminPanel()">관리자</a>
       </div>
     </nav>
-  <% } %>
+    <% } %>
   </body>
   <script>
     function showDetails(index) {

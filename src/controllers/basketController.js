@@ -48,34 +48,6 @@ exports.basketPage = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
-  try {
-    const { menu_num } = req.params;
-    const { update } = req.body;
-
-    let bestValue;
-
-    // Check the selected option and set the corresponding value for menu_best
-    if (update === "best") {
-      bestValue = "대표메뉴";
-    } else if (update === "recommend") {
-      bestValue = "추천메뉴";
-    } else {
-      // Handle other cases or provide a default value
-      bestValue = "대표메뉴";
-    }
-
-    const updateQuery = await pool.query(
-      "UPDATE menu SET menu_best = ? WHERE menu_num = ?",
-      [bestValue, menu_num]
-    );
-
-    res.redirect("/");
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 //즉시구매
 exports.buynow = async (req, res) => {
   try {

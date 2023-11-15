@@ -38,3 +38,18 @@ exports.addSupply = async (req, res) => {
     console.error(error);
   }
 };
+
+exports.uptype = async (req, res) => {
+  try {
+    const { menu_num, type } = req.body;
+
+    const updatetype = await pool.query(
+      "update menu set menu_best = ? where menu_num = ? ",
+      [type, menu_num]
+    );
+
+    return res.redirect("/manager");
+  } catch (error) {
+    console.log(error);
+  }
+};
