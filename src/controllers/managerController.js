@@ -1,5 +1,3 @@
-// managerController.js
-
 const pool = require("../../middleware/db");
 
 exports.managerPage = async (req, res) => {
@@ -8,8 +6,9 @@ exports.managerPage = async (req, res) => {
     const sup = await pool.query(
       "SELECT * FROM supply INNER JOIN delivery ON supply.sup_num = delivery.supply_sup_num;"
     );
+
     const menu_recipe_info = await pool.query(
-      "SELECT * FROM coffeeshop.menu inner join coffeeshop.recipe on menu_num = recipe.menu_menu_num;"
+      "select * from coffeeshop.menu inner join recipe on menu_num = menu_menu_num inner join ingredient on recipe.ingredient_ingre_name = ingre_name;"
     );
 
     res.render("manager", {
@@ -27,7 +26,7 @@ exports.addSupply = async (req, res) => {
   try {
     const { number, name, city } = req.body;
     if (!name || !city) {
-      return res.status(400).json({ error: "이름과 도시를 모두 입력하세요." });
+      return res.redirect("/manager");
     }
     await pool.query(
       "INSERT INTO supply (sup_num, sup_name, sup_address) VALUES (?,?, ?)",
@@ -46,6 +45,48 @@ exports.uptype = async (req, res) => {
     const updatetype = await pool.query(
       "update menu set menu_best = ? where menu_num = ? ",
       [type, menu_num]
+    );
+
+    return res.redirect("/manager");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.addingre = async (req, res) => {
+  try {
+    const { sup_name, del_name, del_count, del_type } = req.body;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    const del_date = `${year}-${month}-${day}`;
+    const sup_info = await pool.query(
+      "SELECT sup_num,sup_address from supply where sup_name = ?; ",
+      [sup_name]
+    );
+    const ingre_info = await pool.query(
+      "select ingre_totalcount from ingredient where ingre_name = ?",
+      [del_name]
+    );
+    if (del_type === "KG") {
+      del_totalprice = Number(del_count) * 1000;
+    } else if (del_type === "L") {
+      del_totalprice = Number(del_count) * 500;
+    } else {
+      del_totalprice = Number(del_count) * 250;
+    }
+    //필요한 데이터 다받아옴 추가하고 totlacount에 추가하면 하면끝
+    console.log(
+      sup_name,
+      sup_info[0][0].sup_num,
+      sup_info[0][0].sup_address,
+      del_name,
+      del_count,
+      del_type,
+      del_date,
+      del_totalprice,
+      ingre_info[0][0].ingre_totalcount
     );
 
     return res.redirect("/manager");

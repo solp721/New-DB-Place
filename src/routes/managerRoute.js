@@ -9,6 +9,10 @@ router.get("/", managerController.managerPage);
 //공급업체 추가
 router.post("/addSupply", managerController.addSupply);
 
+//공급업체 재료 주문
+router.post("/addingre", managerController.addingre);
+
+//메뉴타입 업데이트
 router.post("/uptype", managerController.uptype);
 
 module.exports = router;

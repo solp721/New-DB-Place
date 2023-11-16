@@ -30,11 +30,11 @@
         </tbody>
       </table>
       <form action="/manager/addSupply" method="post" id="supplyForm">
-        <label for="name">업체 이름:</label>
-        <input type="text" id="name" name="name" required />
-
         <label for="name">업체 번호:</label>
         <input type="number" id="number" name="number" required />
+
+        <label for="name">업체 이름:</label>
+        <input type="text" id="name" name="name" required />
 
         <label for="city">업체 위치:</label>
         <select id="city" name="city" required>
@@ -46,35 +46,68 @@
       </form>
     </div>
     <div>
-      <h2>공급업체별 주문현황</h2>
+      <h2>공급업체 재료 주문현황</h2>
+      <small>[1KG = 1000] [1L = 500] [1LBS = 500] </small>
       <table border="1">
         <thead>
           <tr>
+            <th>주문 번호</th>
             <th>업체 번호</th>
             <th>업체 이름</th>
             <th>업체 주소</th>
-            <th>주문 번호</th>
             <th>주문 목록</th>
             <th>주문 수량</th>
             <th>주문 목록 단위</th>
             <th>주문 날짜</th>
+            <th>주문 가격</th>
           </tr>
         </thead>
         <tbody>
           <% for (let i = 0; i < sup.length; i++) { %>
           <tr>
+            <td><%= sup[i].delivery_num %></td>
             <td><%= sup[i].sup_num %></td>
             <td><%= sup[i].sup_name %></td>
             <td><%= sup[i].sup_address %></td>
-            <td><%= sup[i].delivery_num %></td>
             <td><%= sup[i].ingredient_ingre_name %></td>
             <td><%= sup[i].delivery_totalcount %></td>
             <td><%= sup[i].delivery_ordertype %></td>
             <td><%= sup[i].delivery_date %></td>
+            <td><%= sup[i].delivery_price %></td>
           </tr>
           <% } %>
         </tbody>
       </table>
+    </div>
+    <div>
+      <h2>재료 주문</h2>
+      <form action="/manager/addingre" method="post" id="addingreForm">
+        <label for="sup_name">주문업체: </label>
+        <select name="sup_name">
+          <% for (let i = 0; i < sup_info.length; i++) { %>
+          <option value="<%= sup_info[i].sup_name %>">
+            <%= sup_info[i].sup_name %>
+          </option>
+          <% } %>
+        </select>
+        <label for="del_name">주문목록: </label>
+        <select name="del_name">
+          <% for (let i = 0; i < menu_recipe_info.length; i++) { %>
+          <option value="<%=  menu_recipe_info[i].ingredient_ingre_name %>">
+            <%= menu_recipe_info[i].ingredient_ingre_name%>
+          </option>
+          <% } %>
+        </select>
+        <label for="del_count">주문수량: </label>
+        <input type="number" name="del_count" value="1" min="1" max="100" />
+        <label for="del_type">주문단위: </label>
+        <select name="del_type" id="del_type">
+          <option value="KG">KG</option>
+          <option value="L">L</option>
+          <option value="LBS">LBS</option>
+        </select>
+        <button type="submit">주문</button>
+      </form>
     </div>
     <div>
       <h2>메뉴별 레시피 현황</h2>
@@ -87,6 +120,7 @@
           <th>이달의메뉴</th>
           <th>레시피</th>
           <th>필요한재료량</th>
+          <th>남은재료량</th>
         </thead>
         <% for (let i = 0; i < menu_recipe_info.length; i++) { %>
         <tbody>
@@ -113,6 +147,7 @@
             </td>
             <td><%= menu_recipe_info[i].ingredient_ingre_name %></td>
             <td><%= menu_recipe_info[i].recipe_req %></td>
+            <td><%= menu_recipe_info[i].ingre_totalcount %></td>
           </tr>
           <% } %>
         </tbody>
