@@ -11,8 +11,7 @@ router.get("/", async (req, res) => {
   const ingre = await pool.query(
     "select * from menu inner join recipe on menu_num = menu_menu_num inner join ingredient on ingredient_ingre_name = ingre_name;"
   );
-
-  console.log(ingre);
+  const bestmenu = await pool.query("select menu_best from menu");
   if (req.session.uid) {
     const user_info = await pool.query(
       "select user_id,user_name from user where user_id = ?",
@@ -24,6 +23,7 @@ router.get("/", async (req, res) => {
       signinStatus: true,
       menu_info: menu[0],
       ingre_info: ingre[0],
+      menu_best: bestmenu[0],
     });
   } else {
     res.render("index", {
@@ -35,8 +35,6 @@ router.get("/", async (req, res) => {
 
 router.post("/search", async (req, res) => {
   let { query } = req.body;
-
-  console.log(query);
 
   if (query == "커피") {
     query = "coffee";

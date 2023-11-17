@@ -348,7 +348,6 @@ exports.orderBasket = async (req, res) => {
           "select * from coffeeshop.order where user_user_id = ? order by order_num desc;",
           [req.session.uid]
         );
-
         // ordermenu 테이블에 주문 내역 추가
         if (menu_name.length >= 2) {
           for (var i = 0; i < temp.length; i++) {
@@ -361,7 +360,6 @@ exports.orderBasket = async (req, res) => {
                 temp[i].menu_price,
               ]
             );
-            // console.log("!!!!sssssss");
           }
         } else {
           const ordermenu_list = await pool.query(

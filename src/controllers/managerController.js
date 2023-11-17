@@ -76,17 +76,34 @@ exports.addingre = async (req, res) => {
     } else {
       del_totalprice = Number(del_count) * 250;
     }
-    //필요한 데이터 다받아옴 추가하고 totlacount에 추가하면 하면끝
-    console.log(
-      sup_name,
-      sup_info[0][0].sup_num,
-      sup_info[0][0].sup_address,
-      del_name,
-      del_count,
-      del_type,
-      del_date,
-      del_totalprice,
-      ingre_info[0][0].ingre_totalcount
+
+    // console.log(
+    //   sup_name,
+    //   sup_info[0][0].sup_num,
+    //   sup_info[0][0].sup_address,
+    //   del_name,
+    //   del_count,
+    //   del_type,
+    //   del_date,
+    //   del_totalprice,
+    //   ingre_info[0][0].ingre_totalcount
+    // );
+    const insert_delivery = await pool.query(
+      "insert into delivery(supply_sup_num,ingredient_ingre_name,delivery_totalcount,delivery_date,delivery_ordertype,delivery_price)VALUES (?,?,?,?,?,?); ",
+      [
+        sup_info[0][0].sup_num,
+        del_name,
+        del_count,
+        del_date,
+        del_type,
+        del_totalprice,
+      ]
+    );
+
+    console.log(del_count, ingre_info[0][0].ingre_totalcount);
+    const update_ingre = await pool.query(
+      "update coffeeshop.ingredient set ingre_totalcount = ? where ingre_name = ?;",
+      [Number(ingre_info[0][0].ingre_totalcount) + Number(del_count), del_name]
     );
 
     return res.redirect("/manager");
