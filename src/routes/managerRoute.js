@@ -15,4 +15,7 @@ router.post("/addingre", managerController.addingre);
 //메뉴타입 업데이트
 router.post("/uptype", managerController.uptype);
 
+//메뉴추가
+router.post("/addMenu", managerController.addMenu);
+
 module.exports = router;
