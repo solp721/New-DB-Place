@@ -11,15 +11,16 @@ exports.managerPage = async (req, res) => {
     const menu_recipe_info = await pool.query(
       "select * from coffeeshop.menu inner join recipe on menu_num = menu_menu_num inner join ingredient on recipe.ingredient_ingre_name = ingre_name;"
     );
+    const ingre_info = await pool.query("select * from ingredient");
 
     res.render("manager", {
       sup_info: sup_info[0],
       sup: sup[0],
       menu_recipe_info: menu_recipe_info[0],
+      ingre_info: ingre_info[0],
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("내부 서버 오류");
   }
 };
 
@@ -54,27 +55,21 @@ exports.uptype = async (req, res) => {
         "select * from coffeeshop.menu inner join recipe on menu_num = menu_menu_num inner join ingredient on recipe.ingredient_ingre_name = ingre_name where menu_num = ?;",
         [menu_num]
       );
+      console.log(ingre_menu[0][0].ingre_totalcount);
       for (let i = 0; i < ingre_menu.length; i++) {
         if (
           ingre_menu[0][i].ingre_totalcount <
           ingre_menu[0][i].recipe_req * 30
         ) {
-          console.log(
-            ingre_menu[0][i].ingredient_ingre_name,
-            ingre_menu[0][i].ingre_totalcount,
-            "적음"
+          const update_ingre = await pool.query(
+            "update coffeeshop.ingredient set ingre_totalcount = ? where ingre_name = ?;",
+            [
+              Number(ingre_menu[0][i].recipe_req * 30),
+              ingre_menu[0][i].ingredient_ingre_name,
+            ]
           );
         }
       }
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, "0");
-      const day = String(today.getDate()).padStart(2, "0");
-      const del_date = `${year}-${month}-${day}`;
-      //추천메뉴되면 그 메뉴값 다 받아와서 그 메뉴에 필요한재료량 * 30개이상의 재고를
-      // 자동으로 주문해서 남은재료량에 그 숫자를 더함
-      // 만약이미 재고량이 그만큼있다면 아무것도안함
-      // 공급업체는 마지막에 주문한 업체를 사용하고 주문목록단위는 Water을 제외 LBS로 통일
     }
     return res.redirect("/manager");
   } catch (error) {
@@ -96,47 +91,51 @@ exports.addingre = async (req, res) => {
       "SELECT sup_num,sup_address from supply where sup_name = ?; ",
       [sup_name]
     );
-    const ingre_info = await pool.query(
-      "select ingre_totalcount from ingredient where ingre_name = ?",
-      [del_name]
-    );
-    if (del_type === "KG") {
-      del_totalprice = Number(del_count) * 1000;
-    } else if (del_type === "L") {
-      del_totalprice = Number(del_count) * 500;
-    } else {
-      del_totalprice = Number(del_count) * 250;
+    if (sup_info.length > 0) {
+      const ingre_info = await pool.query(
+        "select ingre_totalcount from ingredient where ingre_name = ?",
+        [del_name]
+      );
+      if (del_type === "KG") {
+        del_totalprice = Number(del_count) * 1000;
+      } else if (del_type === "L") {
+        del_totalprice = Number(del_count) * 500;
+      } else {
+        del_totalprice = Number(del_count) * 250;
+      }
+
+      // console.log(
+      //   sup_name,
+      //   sup_info[0][0].sup_num,
+      //   sup_info[0][0].sup_address,
+      //   del_name,
+      //   del_count,
+      //   del_type,
+      //   del_date,
+      //   del_totalprice,
+      //   ingre_info[0][0].ingre_totalcount
+      // );
+      const insert_delivery = await pool.query(
+        "insert into delivery(supply_sup_num,ingredient_ingre_name,delivery_totalcount,delivery_date,delivery_ordertype,delivery_price)VALUES (?,?,?,?,?,?); ",
+        [
+          sup_info[0][0].sup_num,
+          del_name,
+          del_count,
+          del_date,
+          del_type,
+          del_totalprice,
+        ]
+      );
+
+      console.log(del_count, ingre_info[0][0].ingre_totalcount);
+      const update_ingre = await pool.query(
+        "update coffeeshop.ingredient set ingre_totalcount = ? where ingre_name = ?;",
+        [
+          Number(ingre_info[0][0].ingre_totalcount) + Number(del_count),
+          del_name,
+        ]
+      );
     }
-
-    // console.log(
-    //   sup_name,
-    //   sup_info[0][0].sup_num,
-    //   sup_info[0][0].sup_address,
-    //   del_name,
-    //   del_count,
-    //   del_type,
-    //   del_date,
-    //   del_totalprice,
-    //   ingre_info[0][0].ingre_totalcount
-    // );
-    const insert_delivery = await pool.query(
-      "insert into delivery(supply_sup_num,ingredient_ingre_name,delivery_totalcount,delivery_date,delivery_ordertype,delivery_price)VALUES (?,?,?,?,?,?); ",
-      [
-        sup_info[0][0].sup_num,
-        del_name,
-        del_count,
-        del_date,
-        del_type,
-        del_totalprice,
-      ]
-    );
-
-    console.log(del_count, ingre_info[0][0].ingre_totalcount);
-    const update_ingre = await pool.query(
-      "update coffeeshop.ingredient set ingre_totalcount = ? where ingre_name = ?;",
-      [Number(ingre_info[0][0].ingre_totalcount) + Number(del_count), del_name]
-    );
-
     return res.redirect("/manager");
   } catch (error) {
     console.log(error);
@@ -146,8 +145,45 @@ exports.addingre = async (req, res) => {
 //메뉴추가
 exports.addMenu = async (req, res) => {
   try {
+    const { menu_num, menu_name, menu_price, menu_type, menu_spe } = req.body;
+    console.log(menu_num, menu_name, menu_price, menu_type, menu_spe);
+    const insert_menu = await pool.query(
+      "insert into menu(menu_num,menu_name,menu_price,menu_type,menu_best)values(?,?,?,?,?)",
+      [menu_num, menu_name, menu_price, menu_type, menu_spe]
+    );
     return res.redirect("/manager");
   } catch (error) {
     console.log();
+  }
+};
+
+//레시피추가
+exports.addRecipe = async (req, res) => {
+  try {
+    const { menu_num, recipe_name, recipe_req } = req.body;
+    console.log(menu_num, recipe_name, recipe_req);
+    const insert_recipe = await pool.query(
+      "insert into recipe(menu_menu_num,ingredient_ingre_name,recipe_req)values(?,?,?)",
+      [menu_num, recipe_name, recipe_req]
+    );
+    return res.redirect("/manager");
+  } catch (error) {
+    console.log();
+  }
+};
+
+//재료추가
+exports.insertIngre = async (req, res) => {
+  try {
+    const { ingre_name, ingre_from } = req.body;
+
+    console.log(ingre_name, ingre_from);
+    const insertingre = await pool.query(
+      "INSERT INTO ingredient (ingre_name,ingre_totalcount, ingre_from) VALUES (?,0, ?)",
+      [ingre_name, ingre_from]
+    );
+    return res.redirect("/manager");
+  } catch (error) {
+    console.error(error);
   }
 };

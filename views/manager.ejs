@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="/stylesheets/manager.css" />
   </head>
   <body>
     <a href="/"><h1>A DB PLACE</h1></a>
@@ -31,13 +32,13 @@
       </table>
       <form action="/manager/addSupply" method="post" id="supplyForm">
         <label for="name">업체 번호:</label>
-        <input type="number" id="number" name="number" required />
+        <input type="number" id="number" name="number" />
 
         <label for="name">업체 이름:</label>
-        <input type="text" id="name" name="name" required />
+        <input type="text" id="name" name="name" />
 
         <label for="city">업체 위치:</label>
-        <select id="city" name="city" required>
+        <select id="city" name="city">
           <option value="부산">부산</option>
           <option value="서울">서울</option>
         </select>
@@ -45,6 +46,40 @@
         <button type="submit">추가</button>
       </form>
     </div>
+    <hr />
+    <div>
+      <h2>재료 현황</h2>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>재료 번호</th>
+            <th>재료 이름</th>
+            <th>원산지</th>
+            <th>재료 개수</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (let i = 0; i < ingre_info.length; i++) { %>
+          <tr>
+            <td><%= i %></td>
+            <td><%= ingre_info[i].ingre_name %></td>
+            <td><%= ingre_info[i].ingre_from %></td>
+            <td><%= ingre_info[i].ingre_totalcount%></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <form action="/manager/insertIngre" method="post" id="ingreForm">
+        <label for="name">재료이름:</label>
+        <input type="text" id="ingre_name" name="ingre_name" />
+
+        <label for="name">원산지:</label>
+        <input type="text" id="ingre_from" name="ingre_from" />
+
+        <button type="submit">추가</button>
+      </form>
+    </div>
+    <hr />
     <div>
       <h2>공급업체 재료 주문현황</h2>
       <small>[1KG = 1000] [1L = 500] [1LBS = 500] </small>
@@ -78,8 +113,6 @@
           <% } %>
         </tbody>
       </table>
-    </div>
-    <div>
       <form action="/manager/addingre" method="post" id="addingreForm">
         <label for="sup_name">주문업체: </label>
         <select name="sup_name">
@@ -91,9 +124,9 @@
         </select>
         <label for="del_name">주문목록: </label>
         <select name="del_name">
-          <% for (let i = 0; i < menu_recipe_info.length; i++) { %>
-          <option value="<%=  menu_recipe_info[i].ingredient_ingre_name %>">
-            <%= menu_recipe_info[i].ingredient_ingre_name%>
+          <% for (let i = 0; i < ingre_info.length; i++) { %>
+          <option value="<%=  ingre_info[i].ingre_name %>">
+            <%= ingre_info[i].ingre_name%>
           </option>
           <% } %>
         </select>
@@ -108,6 +141,7 @@
         <button type="submit">주문</button>
       </form>
     </div>
+    <hr />
     <div>
       <h2>메뉴별 레시피 현황</h2>
       <table border="1">
@@ -121,14 +155,34 @@
           <th>필요한재료량</th>
           <th>남은재료량</th>
         </thead>
-        <% for (let i = 0; i < menu_recipe_info.length; i++) { %>
+        <% for (let i = 0; i < menu_recipe_info.length; i++) { %> <% if (i === 0
+        || menu_recipe_info[i].menu_num !== menu_recipe_info[i - 1].menu_num) {
+        %>
         <tbody>
           <tr>
-            <td><%= menu_recipe_info[i].menu_num %></td>
-            <td><%= menu_recipe_info[i].menu_name %></td>
-            <td><%= menu_recipe_info[i].menu_price %></td>
-            <td><%= menu_recipe_info[i].menu_type %></td>
-            <td>
+            <td
+              rowspan="<%= menu_recipe_info.filter(item => item.menu_num === menu_recipe_info[i].menu_num).length %>"
+            >
+              <%= menu_recipe_info[i].menu_num %>
+            </td>
+            <td
+              rowspan="<%= menu_recipe_info.filter(item => item.menu_num === menu_recipe_info[i].menu_num).length %>"
+            >
+              <%= menu_recipe_info[i].menu_name %>
+            </td>
+            <td
+              rowspan="<%= menu_recipe_info.filter(item => item.menu_num === menu_recipe_info[i].menu_num).length %>"
+            >
+              <%= menu_recipe_info[i].menu_price %>
+            </td>
+            <td
+              rowspan="<%= menu_recipe_info.filter(item => item.menu_num === menu_recipe_info[i].menu_num).length %>"
+            >
+              <%= menu_recipe_info[i].menu_type %>
+            </td>
+            <td
+              rowspan="<%= menu_recipe_info.filter(item => item.menu_num === menu_recipe_info[i].menu_num).length %>"
+            >
               <form action="manager/uptype" method="post">
                 <input
                   type="hidden"
@@ -148,11 +202,56 @@
             <td><%= menu_recipe_info[i].recipe_req %></td>
             <td><%= menu_recipe_info[i].ingre_totalcount %></td>
           </tr>
-          <% } %>
+          <% } else { %>
+          <tr>
+            <td><%= menu_recipe_info[i].ingredient_ingre_name %></td>
+            <td><%= menu_recipe_info[i].recipe_req %></td>
+            <td><%= menu_recipe_info[i].ingre_totalcount %></td>
+          </tr>
+          <% } %> <% } %>
         </tbody>
       </table>
-      <form action="/manager/addMenu" method="post" id="supplyForm">
-        <label for="name">메뉴이름:</label>
+      <form action="/manager/addMenu" method="post" id="menuform">
+        <label for "num">메뉴번호: </label>
+        <input type="number" value="1" min="1" max="50" id="menu_num" name="menu_num"/>
+
+        <label for="name">메뉴이름: </label>
+        <input type="text" id="menu_name" name="menu_name" />
+
+        <label for="name">메뉴가격:</label>
+        <input type="number" id="menu_price" name="menu_price" />
+
+        <label for="menu_type">메뉴타입:</label>
+        <select id="menu_type" name="menu_type">
+          <option value="coffee">coffee</option>
+          <option value="dessert">dessert</option>
+          <option value="tea">tea</option>
+        </select>
+
+        <select id="menu_spe" name="menu_spe">
+          <option value="대표메뉴">대표메뉴</option>
+          <option value="추천메뉴">추천메뉴</option>
+          <option value="기본메뉴">기본메뉴</option>
+        </select>
+
+        <button type="submit">추가</button>
+      </form>
+      <br /><br />
+      <form action="/manager/addRecipe" method="post" id="recipeform">
+        <label for="menu_num">레시피 추가 메뉴번호: </label>
+        <input type="number" name="menu_num" value="1" min="1" max="50" />
+
+        <label for="recipe_name">추가할 레시피: </label>
+        <select id="recipe_name" name="recipe_name">
+          <% for (let i = 0; i < ingre_info.length; i++) { %>
+          <option value="<%=  ingre_info[i].ingre_name %>">
+            <%= ingre_info[i].ingre_name%>
+          </option>
+          <% } %>
+        </select>
+
+        <label for="recipe_req">필요한 양: </label>
+        <input type="number" name="recipe_req" value="1" min="1" max="50" />
 
         <button type="submit">추가</button>
       </form>

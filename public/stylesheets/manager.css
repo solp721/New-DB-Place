@@ -27,7 +27,6 @@ a[type="button"]:hover {
   background-color: #0056a6;
 }
 
-/* 로그아웃, 장바구니, 마이페이지 버튼 스타일 */
 a[type="button"] {
   margin-right: 10px;
   color: #fff;
@@ -37,8 +36,6 @@ a[type="button"] {
 a[type="button"]:hover {
   text-decoration: underline;
 }
-
-/* ... (기존 스타일 코드) ... */
 
 h2 {
   color: #333;
@@ -50,7 +47,6 @@ a {
   color: #0066cc;
 }
 
-/* 네비게이션 스타일 */
 nav {
   background-color: #fff;
   padding: 10px;
@@ -67,7 +63,6 @@ nav a {
   color: #333;
 }
 
-/* 테이블 스타일 */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -85,7 +80,6 @@ th {
   background-color: #f2f2f2;
 }
 
-/* 버튼 스타일 */
 button,
 input[type="submit"] {
   background-color: #0066cc;
@@ -102,7 +96,6 @@ input[type="submit"]:disabled {
   cursor: not-allowed;
 }
 
-/* 입력 필드 및 셀렉트 박스 스타일 */
 input[type="text"],
 input[type="number"],
 select {
@@ -110,12 +103,10 @@ select {
   margin-right: 10px;
 }
 
-/* 숨겨진 행 스타일 */
 .hidden {
   display: none;
 }
 
-/* 검색 폼 스타일 */
 form {
   display: inline-block;
 }

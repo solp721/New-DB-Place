@@ -21,11 +21,16 @@ exports.mypage = async (req, res) => {
           [req.session.uid]
         );
 
+        const best_menu = await pool.query(
+          "SELECT menu_menu_num, sum(ordermenu_count) as sum FROM coffeeshop.ordermenu group by menu_menu_num order by sum desc limit 2;"
+        );
+
         res.render("mypage", {
           user_info: user_info[0],
           order_info: order_info[0],
           order_list_info: order_list_info[0],
           menu_info: menu_info[0],
+          best_menu: best_menu[0],
           signinStatus: true,
         });
       } else {

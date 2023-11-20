@@ -18,4 +18,10 @@ router.post("/uptype", managerController.uptype);
 //메뉴추가
 router.post("/addMenu", managerController.addMenu);
 
+//레시피추가
+router.post("/addRecipe", managerController.addRecipe);
+
+//재료추가
+router.post("/insertIngre", managerController.insertIngre);
+
 module.exports = router;

@@ -12,8 +12,8 @@
       <thead>
         <tr>
           <th scope="col">장바구니 번호</th>
-          <th scope="col">합게</th>
-          <th colspan="3"></th>
+          <th scope="col">합계</th>
+          <th colspan="4">주문</th>
         </tr>
       </thead>
       <tbody>
@@ -21,7 +21,6 @@
           <%if(basket_info.length != 0) {%>
           <th scope="row"><%= basket_info[0].basket_num%></th>
           <td><%= sumPrice[0].sum%></td>
-          <td colspan="2"></td>
           <td>
             <div>
               <form action="/basket/orderBasket" method="post">
