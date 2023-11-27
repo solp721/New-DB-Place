@@ -10,31 +10,13 @@
     <a href="/" style="text-decoration: none"><h1>A DB PLACE</h1></a>
     <h2><%= user_info[0].user_id %>님의 마이페이지 입니다.</h2>
 
-    <div>
-      <form action="/mypage/best">
-        <h2>BESTMENU</h2>
-        <% for(var i = 0; i< best_menu.length; i++) { %>
-        <h4>
-          <%= best_menu[i].menu_menu_num %>번 메뉴 <%= best_menu[i].sum %>번
-          주문 <%=[i+1]%> 등입니다!
-          <input
-            type="hidden"
-            name="best_menu"
-            value="<%= best_menu[i].menu_menu_num %>"
-          />
-          <input
-            type="hidden"
-            name="best_menu_sum"
-            value="<%= best_menu[i].sum %>"
-          />
-        </h4>
-        <% } %>
-        <label for="date">년월</label>
-        <input type="text" name="best_date" />
-
-        <button type="submit">추가</button>
-      </form>
-    </div>
+    <h3>BESTMENU</h3>
+    <% for(var i = 0; i< best_menu.length; i++) { %>
+    <h4>
+      현재 <%= best_menu[i].menu_menu_num %>번 메뉴 <%= best_menu[i].menu_name
+      %>가 <%= best_menu[i].sum %>번으로 주문 <%=[i+1]%>등입니다!
+    </h4>
+    <% } %>
 
     <h3><%= user_info[0].user_id %>님의 회원정보 입니다.</h3>
     <table border="1">
@@ -44,6 +26,8 @@
           <th scope="col">회원 이름</th>
           <th scope="col">회원 주소</th>
           <th scope="col">회원 휴대폰번호</th>
+          <th scope="col">회원 총 주문금액</th>
+          <th scope="col">회원 등급</th>
         </tr>
       </thead>
       <tbody>
@@ -53,6 +37,8 @@
           <td><%= user_info[i].user_name %></td>
           <td><%= user_info[i].user_address %></td>
           <td><%= user_info[i].user_phone %></td>
+          <td><%= user_info[i].user_totalprice %></td>
+          <td><%= user_info[i].user_rank %></td>
         </tr>
         <% } %>
       </tbody>

@@ -16,13 +16,14 @@ exports.mypage = async (req, res) => {
           "select * from coffeeshop.ordermenu where order_order_num = ?",
           [order_info[0][0].order_num]
         );
+
         const menu_info = await pool.query(
           "SELECT * FROM coffeeshop.order o JOIN coffeeshop.ordermenu om ON o.order_num = om.order_order_num JOIN coffeeshop.menu m ON om.menu_menu_num = m.menu_num where user_user_id = ?",
           [req.session.uid]
         );
 
         const best_menu = await pool.query(
-          "SELECT menu_menu_num, sum(ordermenu_count) as sum FROM coffeeshop.ordermenu group by menu_menu_num order by sum desc limit 2;"
+          "SELECT menu_menu_num,menu_name,sum(ordermenu_count) as sum FROM coffeeshop.ordermenu inner join coffeeshop.menu on menu_num = menu_menu_num group by menu_menu_num order by sum desc limit 2 ;"
         );
 
         res.render("mypage", {

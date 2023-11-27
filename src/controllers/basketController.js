@@ -338,16 +338,56 @@ exports.orderBasket = async (req, res) => {
           "SELECT * FROM basketlist WHERE basket_basket_num IN (SELECT basket_num FROM basket WHERE user_user_id=?)",
           [req.session.uid]
         );
+
         // order 테이블에 주문 추가
         const addOrder = await pool.query(
           "INSERT INTO coffeeshop.order (order_date, order_pay, order_totalprice, user_user_id) VALUES (?, ?, ?, ?)",
           [orderDate, pay, Number(sumPrice[0][0].sum), req.session.uid]
         );
 
+        // 장바구니에서 구매하면 유저랭크 + 유저 주문총금액 업데이트
+        try {
+          if (req.session.uid) {
+            const user_totalprice = await pool.query(
+              "select user_totalprice from coffeeshop.user where user_id = ?",
+              [req.session.uid]
+            );
+
+            const user_total = await pool.query(
+              "update coffeeshop.user set user_totalprice = ? where user_id = ? ",
+              [
+                Number(user_totalprice[0][0].user_totalprice) +
+                  Number(sumPrice[0][0].sum),
+                req.session.uid,
+              ]
+            );
+
+            if (user_totalprice[0][0].user_totalprice > 10000) {
+              const insert_rank = await pool.query(
+                "update coffeeshop.user set user_rank = ? where user_id = ?",
+                ["Bronze", req.session.uid]
+              );
+            } else if (user_totalprice[0][0].user_totalprice > 30000) {
+              const insert_rank2 = await pool.query(
+                "update coffeeshop.user set user_rank = ? where user_id = ?",
+                ["Silver", req.session.uid]
+              );
+            } else if (user_totalprice[0][0].user_totalprice > 50000) {
+              const insert_rank3 = await pool.query(
+                "update coffeeshop.user set user_rank = ? where user_id = ?",
+                ["Gold", req.session.uid]
+              );
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
         const ordermenu = await pool.query(
           "select * from coffeeshop.order where user_user_id = ? order by order_num desc;",
           [req.session.uid]
         );
+
         // ordermenu 테이블에 주문 내역 추가
         if (menu_name.length >= 2) {
           for (var i = 0; i < temp.length; i++) {

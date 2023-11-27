@@ -54,8 +54,8 @@ exports.register = async (req, res) => {
     const { uid, uname, uaddress, uphone } = req.body;
     console.log(uid, uname, uaddress, uphone, "<- 이걸로 회원가입 완료");
     const user_info = await pool.query(
-      "insert into user(user_id,user_name,user_address,user_phone) values(?,?,?,?)",
-      [uid, uname, uaddress, uphone]
+      "insert into user(user_id,user_name,user_address,user_phone,user_totalprice,user_rank) values(?,?,?,?,?,?)",
+      [uid, uname, uaddress, uphone, 0, "기본"]
     );
     return res.redirect("/");
   } catch (error) {
